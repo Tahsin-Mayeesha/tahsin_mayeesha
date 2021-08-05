@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Classifying Bangla Fake News with HuggingFace Transformers and Fastai | Tahsin Mayeesha</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Classifying Bangla Fake News with HuggingFace Transformers and Fastai" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="An easy to use blogging platform with support for Jupyter Notebooks." />
+<meta property="og:description" content="An easy to use blogging platform with support for Jupyter Notebooks." />
+<link rel="canonical" href="https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/04/_bangla-fake-news.html" />
+<meta property="og:url" content="https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/04/_bangla-fake-news.html" />
+<meta property="og:site_name" content="Tahsin Mayeesha" />
+<meta property="og:image" content="https://tahsin-mayeesha.github.io/tahsin_mayeesha/images/some_folder/your_image.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-04T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2021-08-04T00:00:00-05:00","url":"https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/04/_bangla-fake-news.html","@type":"BlogPosting","image":"https://tahsin-mayeesha.github.io/tahsin_mayeesha/images/some_folder/your_image.png","headline":"Classifying Bangla Fake News with HuggingFace Transformers and Fastai","dateModified":"2021-08-04T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/04/_bangla-fake-news.html"},"description":"An easy to use blogging platform with support for Jupyter Notebooks.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/tahsin_mayeesha/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://tahsin-mayeesha.github.io/tahsin_mayeesha/feed.xml" title="Tahsin Mayeesha" /><link rel="shortcut icon" type="image/x-icon" href="/tahsin_mayeesha/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/tahsin_mayeesha/">Tahsin Mayeesha</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/tahsin_mayeesha/about/">About Me</a><a class="page-link" href="/tahsin_mayeesha/search/">Search</a><a class="page-link" href="/tahsin_mayeesha/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Classifying Bangla Fake News with HuggingFace Transformers and Fastai</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-04T00:00:00-05:00" itemprop="datePublished">
+        Aug 4, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      14 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/tahsin_mayeesha/categories/#fastpages">fastpages</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/tahsin_mayeesha/categories/#jupyter">jupyter</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/Tahsin-Mayeesha/tahsin_mayeesha/tree/master/_notebooks/2021-08-05_bangla-fake-news.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/tahsin_mayeesha/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/Tahsin-Mayeesha/tahsin_mayeesha/master?filepath=_notebooks%2F2021-08-05_bangla-fake-news.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/tahsin_mayeesha/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/Tahsin-Mayeesha/tahsin_mayeesha/blob/master/_notebooks/2021-08-05_bangla-fake-news.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/tahsin_mayeesha/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#Imports">Imports </a></li>
+<li class="toc-entry toc-h1"><a href="#Load-dataset">Load dataset </a></li>
+<li class="toc-entry toc-h1"><a href="#Model">Model </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#Multilingual-BERT">Multilingual BERT </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#run3o17vz4x">Run(3o17vz4x)</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#run-summary">Run summary:</a></li>
+<li class="toc-entry toc-h3"><a href="#run-history">Run history:</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Model-Sharing">Model Sharing </a></li>
+<li class="toc-entry toc-h1"><a href="#Explaining-predictions">Explaining predictions </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-08-05_bangla-fake-news.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this post we cover fine tuning a <a href="https://huggingface.co/bert-base-multilingual-cased">multilingual BERT</a> model from Huggingface Transformers library on <a href="https://aclanthology.org/2020.lrec-1.349/"><strong>BanFakeNews</strong></a> dataset released in LREC 2020. While English Fake News Classification and fact checking tasks have many resources and competitions available such as <a href="http://www.fakenewschallenge.org/">fake news challenge</a> and <a href="https://ai.facebook.com/blog/hateful-memes-challenge-and-data-set/">hateful meme detection</a>, similar efforts in Bangla has been almost non existent. BanFakeNews dataset contains 50k annotated articles from different news sources in Bangladesh, out of them around 1200 articles have been annotated as fake. As transformer architectures uses self attention to learn contextual embeddings they have been very popular in NLP research community for a while and many tools have been built around them.</p>
+<p>This post is reusing materials taught in Weights and Bias's study group of Fast ai with Huggingface(<a href="https://wandb.ai/wandb_fc/events/reports/W-B-Study-Group-Lectures-fast-ai-w-Hugging-Face--Vmlldzo4NDUzNDU?galleryTag=events">link</a>) where several recent(2021) libraries(<a href="https://github.com/ohmeow/blurr">blurr</a>,<a href="https://github.com/morganmcg1/fasthugs">Fasthugs</a> &amp; <a href="https://novetta.github.io/adaptnlp/">Adaptnlp</a>) that integrates components from popular deep learning frameworks Huggingface transformers and Fastai v2 are shown.</p>
+<p>My experience with using Transformers is fairly low, recently I participated in Huggingface's Flax/Jax week and there our team pretrained <a href="https://huggingface.co/flax-community/gpt2-bengali">Bengali GPT2</a> and <a href="https://huggingface.co/flax-community/Bengali-t5/tree/main">T5</a>, so I was looking into Huggingface course and documentation to learn more about how to finetune transformers. Previously my thesis journal paper for undergraduate <a href="https://www.tandfonline.com/doi/full/10.1080/24751839.2020.1833136">"Deep Learning based Question Answering System in Bengali"</a> worked on Bangla Question Answering with transformers, but I had stuck more to given scripts back then and focused more on synthetic dataset construction via translation and handling data corruption issues. So this post will focus more on the high level API of <code>Blurr</code> and the components of huggingface and fastai that are relevant for getting started quickly.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">Uqq</span> <span class="n">transformers</span> <span class="n">datasets</span> <span class="n">tqdm</span>
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">Uqq</span> <span class="n">ohmeow</span><span class="o">-</span><span class="n">blurr</span>
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">Uqq</span> <span class="n">wandb</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">'/content/drive'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount("/content/drive", force_remount=True).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Imports">
+<a class="anchor" href="#Imports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Imports<a class="anchor-link" href="#Imports"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">wandb</span>
+
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">fastai.text.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">fastai.callback.wandb</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="kn">from</span> <span class="nn">blurr.data.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">blurr.modeling.all</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will use weights and biases for tracking experiments and runs. Project page : <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr">https://wandb.ai/tasmiah-tahsin/fake-news-blurr</a></p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">wandb</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+
+<div id="a3236500-9d44-4c37-aeb6-326915fd3076"></div>
+<div class="output_subarea output_javascript ">
+<script type="text/javascript">
+var element = $('#a3236500-9d44-4c37-aeb6-326915fd3076');
+
+        window._wandbApiKey = new Promise((resolve, reject) => {
+            function loadScript(url) {
+            return new Promise(function(resolve, reject) {
+                let newScript = document.createElement("script");
+                newScript.onerror = reject;
+                newScript.onload = resolve;
+                document.body.appendChild(newScript);
+                newScript.src = url;
+            });
+            }
+            loadScript("https://cdn.jsdelivr.net/npm/postmate/build/postmate.min.js").then(() => {
+            const iframe = document.createElement('iframe')
+            iframe.style.cssText = "width:0;height:0;border:none"
+            document.body.appendChild(iframe)
+            const handshake = new Postmate({
+                container: iframe,
+                url: 'https://wandb.ai/authorize'
+            });
+            const timeout = setTimeout(() => reject("Couldn't auto authenticate"), 5000)
+            handshake.then(function(child) {
+                child.on('authorize', data => {
+                    clearTimeout(timeout)
+                    resolve(data)
+                });
+            });
+            })
+        });
+    
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-blue-intense-fg ansi-bold">wandb</span>: You can find your API key in your browser here: https://wandb.ai/authorize
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>wandb: Paste an API key from your profile and hit enter: ··········
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-blue-intense-fg ansi-bold">wandb</span>: Appending key for api.wandb.ai to your netrc file: /root/.netrc
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Load-dataset">
+<a class="anchor" href="#Load-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load dataset<a class="anchor-link" href="#Load-dataset"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This dataset has been downloaded from <a href="https://www.kaggle.com/cryptexcode/banfakenews">Kaggle</a>. Note that there are four files in the given dataset, but we use the two files (Authentic-48k and fake-1k) here because the rest of the files contain labelled fake and authentic news. Labelling in the sense of what type of fake news it is, clickbait, satire, misleading or false context, for the current priliminary phase we stick to binary classification of knowing if a news is fake or authentic. We also concatanate headline and content of the news article during preprocessing and combine the fake and authentic news dataset before sending them to Blurr dataloaders.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>sample image goes here</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">fake</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"/content/drive/MyDrive/fake news/Fake-1K.csv"</span><span class="p">)</span>
+<span class="n">authentic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"/content/drive/MyDrive/fake news/Authentic-48K.csv"</span><span class="p">,</span><span class="n">engine</span><span class="o">=</span><span class="s1">'python'</span><span class="p">,</span><span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">warn_bad_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">authentic</span><span class="p">[[</span><span class="s1">'headline'</span><span class="p">,</span><span class="s1">'content'</span><span class="p">,</span><span class="s1">'label'</span><span class="p">]],</span><span class="n">fake</span><span class="p">[[</span><span class="s1">'headline'</span><span class="p">,</span><span class="s1">'content'</span><span class="p">,</span><span class="s1">'label'</span><span class="p">]]])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">authentic</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">fake</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(48678, 7) (1299, 7)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'headline'</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">'headline'</span><span class="p">,</span><span class="s1">'content'</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>হট্টগোল করায় বাকৃবিতে দুইজন বরখাস্ত, ৬ জনকে শোকজগত ১৭ সেপ্টেম্বর বাংলাদেশ কৃষি বিশ্ববিদ্যালয়ে (বাকৃবি) উপাচার্যের কার্যালয়ে হট্টগোলের ঘটনায় দুইজনকে সাময়িক বরখাস্ত ও ছয় জনকে শোকজ করেছে বিশ্ববিদ্যালয় প্রশাসন। বুধবার বিশ্ববিদ্যালয় বাকৃবি রেজিস্ট্রার সাইফুল ইসলাম স্বাক্ষরিত এক নোটিশে আগামী ৭ দিনের মধ্যে উপযুক্ত উত্তর দেয়ার নির্দেশ দেয়া হয়েছে। এদিকে এ ঘটনায় আন্দোলনের সঙ্গে একাত্বতা প্রকাশ না করায় হামলার শিকার হয়ে কারিগরি কর্মচারী পরিষদের সভাপতি ও সাধারণ সম্পাদক হাসপাতালে ভর্তি হয়েছেন। সাময়িক বরখাস্তরা হলেন- শিক্ষা বিষয়ক শাখার কর্মচারী ও ৩য় শ্রেণির সাধারণ সম্পাদক মো. মোশারফ হোসেন ও কর্মকর্তা পরি...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">label</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span><span class="s2">"Authentic"</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="s2">"Fake"</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">train</span><span class="p">,</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will use <code>Blurr</code> high level API for sequence classification with the pandas dataframe where <code>BlearnerForSequenceClassification.from_dataframe()</code> method takes in a dataframe, splits them from the column of default <code>is_valid</code> using Fastai's <a href="https://docs.fast.ai/data.transforms.html#ColSplitter"><code>ColSplitter</code></a> into train and test splits, constructs the datablock and dataloaders and uses them for training. So we add a <code>'is_valid'</code> column in the dataframe. There are other ways of splitting the data available in Fastai like <code>RandomSubsetSplitter</code> where we can randomize the data inside a dataframe. Since we used scikit-learns train test split to shuffle the dataframe for now we can go with Column based splitting.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">train</span><span class="p">[</span><span class="s1">'is_valid'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">valid</span><span class="p">[</span><span class="s1">'is_valid'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">SettingWithCopyError</span>                      Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-22-66af3476b268&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>train<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">'is_valid'</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> <span class="ansi-green-fg">False</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> valid<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">'is_valid'</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> <span class="ansi-green-fg">True</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/pandas/core/frame.py</span> in <span class="ansi-cyan-fg">__setitem__</span><span class="ansi-blue-fg">(self, key, value)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3042</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">   3043</span>             <span class="ansi-red-fg"># set column</span>
+<span class="ansi-green-fg">-&gt; 3044</span><span class="ansi-red-fg">             </span>self<span class="ansi-blue-fg">.</span>_set_item<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">,</span> value<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3045</span> 
+<span class="ansi-green-intense-fg ansi-bold">   3046</span>     <span class="ansi-green-fg">def</span> _setitem_slice<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> key<span class="ansi-blue-fg">:</span> slice<span class="ansi-blue-fg">,</span> value<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/pandas/core/frame.py</span> in <span class="ansi-cyan-fg">_set_item</span><span class="ansi-blue-fg">(self, key, value)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3125</span>         <span class="ansi-red-fg"># value exception to occur first</span>
+<span class="ansi-green-intense-fg ansi-bold">   3126</span>         <span class="ansi-green-fg">if</span> len<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">-&gt; 3127</span><span class="ansi-red-fg">             </span>self<span class="ansi-blue-fg">.</span>_check_setitem_copy<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3128</span> 
+<span class="ansi-green-intense-fg ansi-bold">   3129</span>     <span class="ansi-green-fg">def</span> _set_value<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> index<span class="ansi-blue-fg">,</span> col<span class="ansi-blue-fg">,</span> value<span class="ansi-blue-fg">,</span> takeable<span class="ansi-blue-fg">:</span> bool <span class="ansi-blue-fg">=</span> <span class="ansi-green-fg">False</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/pandas/core/generic.py</span> in <span class="ansi-cyan-fg">_check_setitem_copy</span><span class="ansi-blue-fg">(self, stacklevel, t, force)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3681</span> 
+<span class="ansi-green-intense-fg ansi-bold">   3682</span>         <span class="ansi-green-fg">if</span> value <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">"raise"</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">-&gt; 3683</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">raise</span> com<span class="ansi-blue-fg">.</span>SettingWithCopyError<span class="ansi-blue-fg">(</span>t<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3684</span>         <span class="ansi-green-fg">elif</span> value <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">"warn"</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">   3685</span>             warnings<span class="ansi-blue-fg">.</span>warn<span class="ansi-blue-fg">(</span>t<span class="ansi-blue-fg">,</span> com<span class="ansi-blue-fg">.</span>SettingWithCopyWarning<span class="ansi-blue-fg">,</span> stacklevel<span class="ansi-blue-fg">=</span>stacklevel<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">SettingWithCopyError</span>: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">final_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train</span><span class="p">,</span><span class="n">valid</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">final_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>text</th>
+      <th>is_valid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2867</th>
+      <td>Authentic</td>
+      <td>পুনম পান্ডের কাণ্ড!ফের সংবাদ শিরোনামে পুনম পান্ডে। এশিয়া কাপে ভারত-পাকিস্তানের ম্যাচ উপলক্ষে পুনম পান্ডে যা করলেন, তা অবাক করা কাণ্ড বটে। বুধবার ছিল ভারত-পাকিস্তানের ক্রিকেট ম্যাচ। আর সেই ম্যাচের আগেই সোশ্যাল সাইটে নিজের ছবি শেয়ার করলেন পুনম। যেখানে তাঁর শরীরের বেশ কিছুটা অংশে এক কুচি সুতোর দেখা মেলেনি। অর্থাত, শরীরের নিন্মাংশ প্রদর্শন করে সোশ্যাল সাইটে উত্তাপ ছড়াতে শুরু করেন পুনম। শুধু তাই নয়, এবারই মজা হবে বলেও নিজের ছবির নিচে ক্যাপশন দিতেও দেখা যায় পুনমকে। ‘ইন্টারনেট সেনসেশন’ পুনমের সেই ছবি প্রকাশ্যে আসতেই তা ভাইরাল হয়ে যায় সঙ্গে সঙ্গে। তবে এই প্রথমবার নয়, এর আগেও বহুবার  নিজের সোশ্যাল ...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>49122</th>
+      <td>Fake</td>
+      <td>যে ১০টি অতিমানবীয় দক্ষতার কারণে ঢাকাবাসীর নোবেল পুরস্কার পাওয়া উচিত - Bengal Beatsঢাকাবাসীর জীবনের খাতায় একের পর এক এত সম্মান এসে জুটছে যে আর কিছুদিন পর শুধুমাত্র নিজেদেরকে এমন সম্মানী শহরের একজন গর্বিত নাগরিক হিসেবে দেখতে পৃথিবীর আর দশটা উন্নত শহর থেকে সবাই এখানে চলে আসবে কিনা সেটাই এখন ভাববার বিষয়। তার উপর নাসার উচ্চপদস্থ গবেষকরা জানিয়েছেন যে এখন থেকে ঢাকার মানুষদের নিশ্চিন্তে মহাবিশ্বের যেকোনো স্থানে পাঠানো সম্ভব। কারণ এরা নিঃসন্দেহে যেকোনো দুর্গম গ্রহে টিকে থাকতে পারবে। তাই অতি দ্রুত এদেরকে সম্মানিত করতে আমাদের সকলের উচিত ঢাকাবাসীকে নোবেল পুরস্কার দেয়া। কিন্তু কেন দেয়া উচিত? চলুন তাহলে...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>14531</th>
+      <td>Authentic</td>
+      <td>মুন্সীগঞ্জে ‘বন্দুকযুদ্ধে’ মাদক কারবারি নিহত ২৬ সেপ্টেম্বর, ২০১৮ ১০:৩২মুন্সীগঞ্জে র‌্যাবের সঙ্গে ‘বন্দুকযুদ্ধে’ আব্দুল মালেক নামের এক মাদক কারবারি নিহত হয়েছে। র‌্যাবের দাবি, এ সময় তাদের দুইজন সদস্য এএসআই মোর্শেদ ও নায়েক লোকমান আহত হয়েছে। র‌্যাব-১১ এর কোম্পানী কমান্ডার মোহিতুল ইসলাম জানান, মঙ্গলবার (২৫ সেপ্টেম্বর) দিবাগত রাত সাড়ে ৩টার দিকে মিরকাদিম পৌরসভার নগর কসবা এলাকায় তাদের টহল টিমের সাথে একদল মাদক কারবারিদের ১৫ মিনিট স্থায়ী একটি বন্দুক যুদ্ধ চলে। এক পর্যায়ে মাদক কারবারিরা পিছু হটে গেলে ঘটনা স্থলে মাদক কারবারি আব্দুল মালেকের মৃত্য দেহ পরে থাকতে দেখে তারা। এছাড়া ঘটনা স্থল থেকে, একটি বিদে...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>45451</th>
+      <td>Authentic</td>
+      <td>ব্রিটিশ এমপিদের কার্যালয়ে ব্যবহৃত কনডোম, বিরক্ত পরিচ্ছন্নতা কর্মীরাব্রিটিশ এমপিদের বিরুদ্ধে ভয়াবহ অভিযোগ এনেছেন তাদের কার্যালয় পরিস্কারের দায়িত্বে থাকা পরিচ্ছন্নতা কর্মীরা। তারা অভিযোগ করে জানিয়েছেন, ব্রিটিশ এমপিদের কার্যালয়ে প্রতিনিয়ত তারা ব্যবহৃত কনডোম এবং বমি দেখতে পান। আর এটা পরিস্কার করতে করতে তারা বিরক্ত। দ্য সানডে টাইমসের এক প্রতিবেদনে জানানো হয়েছে, পার্লামেন্টে ব্রিটিশ এমপিদের অফিস আর পরিস্কার করতে চাইছেন না পরিচ্ছন্নতা কর্মীরা৷ কারণ রোজ অফিসে ঢুকলে বমি আর ব্যবহৃত কন্ডোম খুঁজে পান তারা৷ সূত্রের বরাত দিয়ে সানডে টাইমসের প্রতিবেদনে বলা হয়েছে, এই ধরনের আচরণ কলেজ ছাত্রছাত্রীদের মানায়৷ ...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>48513</th>
+      <td>Authentic</td>
+      <td>'৩৫ বছর বয়সেও আর্জেন্টিনাকে বিশ্বকাপ জেতার ক্ষমতা রাখেন মেসি'দায়িত্ব ছেড়ে চলে গেছেন অনেকদিন হলো। তবে ছাত্রের উপর এখনও আস্থা রাখছেন শিক্ষক। সাবেক আর্জেন্টাইন কোচ জর্জ সাম্পাওলি মনে করছেন, মেসির এখনও বিশ্বকাপ জেতার ক্ষমতা আছে। বয়স কোনো ফ্যাক্টর নয়। আত্মবিশ্বাস থাকলে দুর্গমও সুগম হয়। শুধু বিশ্বাস করতে হবে, ‘তুমি পারবে’। আর বিশ্ব ফুটবলের উজ্জ্বলতম নক্ষত্রের সেই আত্মবিশ্বাস আছে বলেই মনে করেন সাম্পাওলি। তিনি বিশ্বাস করেন ৩৫ বছর বয়সেও লিওনেল মেসি আর্জেন্টিনাকে বিশ্বকাপ জেতাতে পারবেন। প্রসঙ্গত, রাশিয়া বিশ্বকাপে স্বপ্নভঙ্গ হওয়ার পর দীর্ঘ দিন দেশের সাথে যোগাযোগ বিছিন্ন মেসির। এমনকি রাশিয়া থেকে বাড়ি...</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Model">
+<a class="anchor" href="#Model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model<a class="anchor-link" href="#Model"> </a>
+</h1>
+<h2 id="Multilingual-BERT">
+<a class="anchor" href="#Multilingual-BERT" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multilingual BERT<a class="anchor-link" href="#Multilingual-BERT"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since the original paper also used <a href="https://github.com/google-research/bert/blob/master/multilingual.md">multilingual cased bert</a> released by Google this post can be considered as an attempt to reproduce the work of BanFakeNews. They trained mbert for 50 epochs with a learning rate of 0.00002 and optimizer Adam. The batch size was 32. The overall F1 score after training for 50 epochs on this dataset was .99 and f1 for fake class was 0.68. Multilingual bert has been pretrained on 104 languages including bengali with wordpiece tokenization. As bengali is already included it makes it a valid choice for current bangla text classification task. Information for this model are : 104 languages, 12-layer, 768-hidden, 12-heads, 110M parameters.  As the size of the language corpora varied greatly for low resource languages exponential weighted smoothing was performed for weighting data during the pretraining stage, which results in undersampling high resource languages like english and oversampling low resource languages like Bengali. Mbert does not use any marker for input language to enable zero shot training.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">wandb_init_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'reinit'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="s1">'project'</span><span class="p">:</span> <span class="s2">"fake-news-blurr"</span><span class="p">,</span> 
+    <span class="s1">'entity'</span><span class="p">:</span> <span class="s2">"tasmiah-tahsin"</span><span class="p">,</span>
+    <span class="s1">'notes'</span><span class="p">:</span> <span class="s1">'Finetuning banfakenews with multilingual bert via Blurr'</span><span class="p">,</span> 
+    <span class="s1">'tags'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'mbert'</span><span class="p">,</span> <span class="s1">'fake-news-classification'</span><span class="p">,</span> <span class="s1">'blurr'</span><span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">wandb</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">wandb_init_kwargs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-blue-intense-fg ansi-bold">wandb</span>: Currently logged in as: <span class="ansi-yellow-fg">tasmiah-tahsin</span> (use `wandb login --relogin` to force relogin)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+                Tracking run with wandb version 0.11.2<br>
+                Syncing run <strong style="color:#cdcd00">faithful-paper-16</strong> to <a href="https://wandb.ai" target="_blank">Weights &amp; Biases</a> <a href="https://docs.wandb.com/integrations/jupyter.html" target="_blank">(Documentation)</a>.<br>
+                Project page: <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr" target="_blank">https://wandb.ai/tasmiah-tahsin/fake-news-blurr</a><br>
+                Run page: <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/3o17vz4x" target="_blank">https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/3o17vz4x</a><br>
+                Run data is saved locally in <code>/content/wandb/run-20210805_095902-3o17vz4x</code><br><br>
+            
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<h1>
+<a class="anchor" href="#run3o17vz4x" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run(3o17vz4x)</h1>
+<iframe src="https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/3o17vz4x" style="border:none;width:100%;height:400px"></iframe>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since I'm fairly new in <code>blurr</code> I'm using the high level API, but the key ideas are following. <code>blurr</code> is integrating two frameworks. Here <code>Fastai</code> is providing the <code>datablock</code>, <code>learner</code>, <code>learning rate finder</code> functionalities with Leslie Smith's 1cycle policy components, while huggingface transformers is providing the ready to use transformer model configuration and architectures made publicly available from huggingface hub.</p>
+<p>Fastai's datablock helps to quickly transform a raw dataset to a mini-batch that can be sent to a model for training with its various transforms and splitting functions along with visualization capacities. Under the hood <code>blurr</code> is providing wrappers for the huggingface transformers and for finetuning its also grouping the parameters of the transformers model along with enabling discriminative fine tuning like  <a href="https://paperswithcode.com/method/ulmfit">ULMFiT</a>. Discriminative finetuning refers to using variable learning rates for different layers of a neural network and they can also change during training(increasing or decreasing learning rate will change how much the parameters are updated during each step).</p>
+<p>Datablock transforms can operate on both item and batch level. Fastai also provides the capacity add callbacks in the training loop. Callbacks are a generic programming concept which refers to calling a function inside another function(the base function calls the callback function, hence the naming) and are extensively used in DL training loops to perform specific tasks during the forward pass, loss calculation, backward pass and optimizer step taking for issues like changing learing rates and more.</p>
+<p>The low level API for <code>blurr</code>  works with datablocks and dataloaders  creating the mini batches which are combined with the model architecture, optimizer and loss function inside a <code>learner</code>. Mid level API contains <code>BLearner</code> and the highest level API contains task specific learners like the current one I'm using which is <code>BlearnerForSequenceClassification</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">blurr.modeling.core</span> <span class="kn">import</span> <span class="n">BlearnerForSequenceClassification</span>
+<span class="n">pretrained_model_name</span> <span class="o">=</span> <span class="s2">"bert-base-multilingual-cased"</span>
+<span class="n">learn</span> <span class="o">=</span> <span class="n">BlearnerForSequenceClassification</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">final_df</span><span class="p">,</span> <span class="n">pretrained_model_name</span><span class="p">,</span> <span class="n">dl_kwargs</span><span class="o">=</span><span class="p">{</span> <span class="s1">'bs'</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">(</span><span class="n">suggest_funcs</span><span class="o">=</span><span class="p">[</span><span class="n">minimum</span><span class="p">,</span> <span class="n">steep</span><span class="p">,</span> <span class="n">valley</span><span class="p">,</span> <span class="n">slide</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr_max</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span><span class="n">cbs</span><span class="o">=</span><span class="p">[</span><span class="n">WandbCallback</span><span class="p">(</span><span class="n">log_preds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_model</span><span class="o">=</span><span class="kc">False</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Could not gather input dimensions
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+    <div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="0" class="" max="1" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/1 00:00&lt;00:00]
+    </div>
+    
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>f1_score</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<p>
+
+    </p>
+<div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="1583" class="" max="3749" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      42.22% [1583/3749 04:21&lt;05:57 0.1390]
+    </div>
+    
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">()</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">lr_max</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span><span class="n">cbs</span><span class="o">=</span><span class="p">[</span><span class="n">WandbCallback</span><span class="p">(</span><span class="n">log_preds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_model</span><span class="o">=</span><span class="kc">False</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">show_results</span><span class="p">(</span><span class="n">learner</span><span class="o">=</span><span class="n">learn</span><span class="p">,</span> <span class="n">max_n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">trunc_at</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>text</th>
+      <th>category</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>আফগানদের ছিটকে বাংলাদেশের রুদ্ধশ্বাস উত্তেজনার ম্যাচে ৩ রানে জিতেছে বাংলাদেশ । ২৪৯ রান আফগানিস্তান থেমেছে ২৪৬ রানে । সংক্ষিপ্ত স্কোর : বাংলাদেশ : ৫০ ওভারে ২৪৯ / ৭ ( লিটন ৪১, শান্ত ৬, মিঠুন ১, মুশফিক ৩</td>
+      <td>Authentic</td>
+      <td>Authentic</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>এলেবেলে : খাল কেটে কুমীর আনবেন না, সিদ্দিককে ভোট দেবেন না [ আহমেদের'এলেবেলে'বাংলা রম্য সাহিত্যে এক অনন্য সংযোজন । এর শিরোনামের রচনাগুলো তিনি তার ছোট ভাই আহসান হাবীবের প্রকাশিত মাসিক উন্মাদের জন্য লিখা</td>
+      <td>Fake</td>
+      <td>Fake</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>বিএনপি শুদু লাঞ্ছনা বঞ্ছনা গঞ্জনা : শমশের | দৈনিক মতিকণ্ঠনিজস্ব মতিবেদকরাজনীতী হতে অবসর ঘোষনা বৃহত্তর ইসলামীর বিএনপি শাখার খারিজি, বৃহত্তর ইসলামীর বিএনপি শাখার মহিলা আমীর ও শক্তির মালিক আপোষহীন দেশনেত</td>
+      <td>Fake</td>
+      <td>Fake</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>বোকো হারাম - গন্তব্য কতদূর? বোকো হারাম উগ্রপন্থী দল । পশ্চিম প্রথমে গঠিত জামাত আহলে সুন্নাহ লিদ জিহাদ, এটিই কিছুদিন পর বোকো হারাম নামে পরিচিতি । এদের মূল বক্তব্য হলো, পশ্চিমা শিক্ষা - সংস্কৃতি নিষিদ্ধ</td>
+      <td>Authentic</td>
+      <td>Authentic</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">wandb</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<br>Waiting for W&amp;B process to finish, PID 722<br>Program ended successfully.
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+Find user logs for this run at: <code>/content/wandb/run-20210805_061325-159q9n5a/logs/debug.log</code>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+Find internal logs for this run at: <code>/content/wandb/run-20210805_061325-159q9n5a/logs/debug-internal.log</code>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<h3>
+<a class="anchor" href="#run-summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run summary:</h3>
+<br><style>
+    table.wandb td:nth-child(1) { padding: 0 10px; text-align: right }
+    </style>
+<table class="wandb">
+<tr>
+<td>epoch</td>
+<td>5</td>
+</tr>
+<tr>
+<td>train_loss</td>
+<td>0.08289</td>
+</tr>
+<tr>
+<td>raw_loss</td>
+<td>0.07101</td>
+</tr>
+<tr>
+<td>wd_0</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_0</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_0</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_0</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>wd_1</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_1</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_1</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_1</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_1</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>wd_2</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_2</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_2</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_2</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_2</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>wd_3</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_3</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_3</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_3</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_3</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>_runtime</td>
+<td>3666</td>
+</tr>
+<tr>
+<td>_timestamp</td>
+<td>1628147675</td>
+</tr>
+<tr>
+<td>_step</td>
+<td>5509</td>
+</tr>
+<tr>
+<td>valid_loss</td>
+<td>0.14061</td>
+</tr>
+<tr>
+<td>f1_score</td>
+<td>0.77586</td>
+</tr>
+<tr>
+<td>accuracy</td>
+<td>0.95286</td>
+</tr>
+</table>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<h3>
+<a class="anchor" href="#run-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run history:</h3>
+<br><style>
+    table.wandb td:nth-child(1) { padding: 0 10px; text-align: right }
+    </style>
+<table class="wandb">
+<tr>
+<td>epoch</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇████</td>
+</tr>
+<tr>
+<td>train_loss</td>
+<td>▇██▇▆▅▅▅▅▅▃▅▄▄▂▄▄▃▃▃▂▂▃▃▁▂▂▂▂▂▂▁▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>raw_loss</td>
+<td>▇▃▃▇▃▃▆▂▃▅▁▆▆▁▁▇▁▁▆▄▅▁▃▄▁▆▂▄▂▃▂▁▄▁▁▁▁█▁▂</td>
+</tr>
+<tr>
+<td>wd_0</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_0</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_0</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_0</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_0</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>wd_1</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_1</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_1</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_1</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_1</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>wd_2</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_2</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_2</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_2</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_2</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>wd_3</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_3</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_3</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_3</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_3</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>_runtime</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇████</td>
+</tr>
+<tr>
+<td>_timestamp</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇████</td>
+</tr>
+<tr>
+<td>_step</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███</td>
+</tr>
+<tr>
+<td>valid_loss</td>
+<td>█▅▄▁▂</td>
+</tr>
+<tr>
+<td>f1_score</td>
+<td>▁▅███</td>
+</tr>
+<tr>
+<td>accuracy</td>
+<td>▁▄▇██</td>
+</tr>
+</table>
+<br>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+Synced 5 W&amp;B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+                    <br>Synced <strong style="color:#cdcd00">faithful-star-9</strong>: <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/159q9n5a" target="_blank">https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/159q9n5a</a><br>
+                
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Model-Sharing">
+<a class="anchor" href="#Model-Sharing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model Sharing<a class="anchor-link" href="#Model-Sharing"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">git</span><span class="o">-</span><span class="n">lfs</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following NEW packages will be installed:
+  git-lfs
+0 upgraded, 1 newly installed, 0 to remove and 40 not upgraded.
+Need to get 2,129 kB of archives.
+After this operation, 7,662 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 git-lfs amd64 2.3.4-1 [2,129 kB]
+Fetched 2,129 kB in 1s (1,676 kB/s)
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 76, &lt;&gt; line 1.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
+Selecting previously unselected package git-lfs.
+(Reading database ... 160837 files and directories currently installed.)
+Preparing to unpack .../git-lfs_2.3.4-1_amd64.deb ...
+Unpacking git-lfs (2.3.4-1) ...
+Setting up git-lfs (2.3.4-1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">transformers</span><span class="o">-</span><span class="n">cli</span> <span class="n">login</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2021-08-05 07:17:22.031785: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+
+        _|    _|  _|    _|    _|_|_|    _|_|_|  _|_|_|  _|      _|    _|_|_|      _|_|_|_|    _|_|      _|_|_|  _|_|_|_|
+        _|    _|  _|    _|  _|        _|          _|    _|_|    _|  _|            _|        _|    _|  _|        _|
+        _|_|_|_|  _|    _|  _|  _|_|  _|  _|_|    _|    _|  _|  _|  _|  _|_|      _|_|_|    _|_|_|_|  _|        _|_|_|
+        _|    _|  _|    _|  _|    _|  _|    _|    _|    _|    _|_|  _|    _|      _|        _|    _|  _|        _|
+        _|    _|    _|_|      _|_|_|    _|_|_|  _|_|_|  _|      _|    _|_|_|      _|        _|    _|    _|_|_|  _|_|_|_|
+
+        
+Username: Tahsin-Mayeesha
+Password: 
+Login successful
+Your token: oSBeuCeqFwuZgHGyqIBjgHEmiAchBfqCTsadczfjKMwdGdOskZjIvLzkFxbQafNAbNHwgsNibftTGdtUfMvWLkBjGwsMGfpdekOyyFbWFVOOJUkktSsdoacPJeeuZkhi 
+
+Your token has been saved to /root/.huggingface/token
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="k">global</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="s2">"tasmiah.tahsin@northsouth.edu"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="k">global</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="s2">"Tahsin-Mayeesha"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">blurr_tfm</span> <span class="o">=</span> <span class="n">get_blurr_tfm</span><span class="p">(</span><span class="n">learn</span><span class="o">.</span><span class="n">dls</span><span class="o">.</span><span class="n">before_batch</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">blurr_tfm</span><span class="o">.</span><span class="n">hf_model</span><span class="o">.</span><span class="n">push_to_hub</span><span class="p">(</span><span class="s2">"bangla-fake-news-mbert"</span><span class="p">,</span><span class="n">use_temp_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'https://huggingface.co/Tahsin-Mayeesha/bangla-fake-news-mbert/commit/2485b1ab7750b7746e6a052bf72f6c8871e8ecd4'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">blurr_tfm</span><span class="o">.</span><span class="n">hf_tokenizer</span><span class="o">.</span><span class="n">push_to_hub</span><span class="p">(</span><span class="s2">"bangla-fake-news-mbert"</span><span class="p">,</span><span class="n">use_temp_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">PanicException</span>                            Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-47-140839f91363&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>blurr_tfm<span class="ansi-blue-fg">.</span>hf_tokenizer<span class="ansi-blue-fg">.</span>push_to_hub<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">"bangla-fake-news-mbert"</span><span class="ansi-blue-fg">,</span>use_temp_dir<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">True</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/transformers/file_utils.py</span> in <span class="ansi-cyan-fg">push_to_hub</span><span class="ansi-blue-fg">(self, repo_path_or_name, repo_url, use_temp_dir, commit_message, organization, private, use_auth_token)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2110</span>         )
+<span class="ansi-green-intense-fg ansi-bold">   2111</span>         <span class="ansi-red-fg"># Save the files in the cloned repo</span>
+<span class="ansi-green-fg">-&gt; 2112</span><span class="ansi-red-fg">         </span>self<span class="ansi-blue-fg">.</span>save_pretrained<span class="ansi-blue-fg">(</span>repo_path_or_name<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2113</span>         <span class="ansi-red-fg"># Commit and push!</span>
+<span class="ansi-green-intense-fg ansi-bold">   2114</span>         url <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_push_to_hub<span class="ansi-blue-fg">(</span>repo<span class="ansi-blue-fg">,</span> commit_message<span class="ansi-blue-fg">=</span>commit_message<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/transformers/tokenization_utils_base.py</span> in <span class="ansi-cyan-fg">save_pretrained</span><span class="ansi-blue-fg">(self, save_directory, legacy_format, filename_prefix, push_to_hub, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2018</span>             file_names<span class="ansi-blue-fg">=</span>file_names<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   2019</span>             legacy_format<span class="ansi-blue-fg">=</span>legacy_format<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">-&gt; 2020</span><span class="ansi-red-fg">             </span>filename_prefix<span class="ansi-blue-fg">=</span>filename_prefix<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   2021</span>         )
+<span class="ansi-green-intense-fg ansi-bold">   2022</span> 
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/transformers/tokenization_utils_fast.py</span> in <span class="ansi-cyan-fg">_save_pretrained</span><span class="ansi-blue-fg">(self, save_directory, file_names, legacy_format, filename_prefix)</span>
+<span class="ansi-green-intense-fg ansi-bold">    572</span>                 save_directory<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">(</span>filename_prefix <span class="ansi-blue-fg">+</span> <span class="ansi-blue-fg">"-"</span> <span class="ansi-green-fg">if</span> filename_prefix <span class="ansi-green-fg">else</span> <span class="ansi-blue-fg">""</span><span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">+</span> TOKENIZER_FILE
+<span class="ansi-green-intense-fg ansi-bold">    573</span>             )
+<span class="ansi-green-fg">--&gt; 574</span><span class="ansi-red-fg">             </span>self<span class="ansi-blue-fg">.</span>backend_tokenizer<span class="ansi-blue-fg">.</span>save<span class="ansi-blue-fg">(</span>tokenizer_file<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    575</span>             file_names <span class="ansi-blue-fg">=</span> file_names <span class="ansi-blue-fg">+</span> <span class="ansi-blue-fg">(</span>tokenizer_file<span class="ansi-blue-fg">,</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    576</span> 
+
+<span class="ansi-red-fg">PanicException</span>: no entry found for key</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Explaining-predictions">
+<a class="anchor" href="#Explaining-predictions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Explaining predictions<a class="anchor-link" href="#Explaining-predictions"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">sample</span> <span class="n">news</span> <span class="o">=</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">transformers</span><span class="o">-</span><span class="n">interpret</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+<span class="n">model_name</span> <span class="o">=</span> <span class="s2">"Tahsin-Mayeesha/bangla-fake-news-mbert"</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+
+<span class="c1"># With both the model and tokenizer initialized we are now able to get explanations on an example text.</span>
+
+<span class="kn">from</span> <span class="nn">transformers_interpret</span> <span class="kn">import</span> <span class="n">SequenceClassificationExplainer</span>
+<span class="n">cls_explainer</span> <span class="o">=</span> <span class="n">SequenceClassificationExplainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="p">)</span>
+<span class="n">word_attributions</span> <span class="o">=</span> <span class="n">cls_explainer</span><span class="p">(</span><span class="s2">"I love you, I like you"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">cls_explainer</span><span class="o">.</span><span class="n">visualize</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+&lt;/div&gt;
+ 
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"174a8046bae644ef971790b3aa9f0833": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_23dd432339b54737b94f017eb2ec8a79", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_0f72032c934d4489a936fe2030a5e1b8", "IPY_MODEL_d85115398e5848ce9f1eed9384fbc15a", "IPY_MODEL_72c482b0cdba458ea10f5ff8e0857f14"]}}, "23dd432339b54737b94f017eb2ec8a79": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "0f72032c934d4489a936fe2030a5e1b8": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_0cdf8254c99e4f8b9f45dfdbd81f7cf5", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": "Downloading: 100%", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_7d7a06fecd1643e9a6ac85bc0d1f9b59"}}, "d85115398e5848ce9f1eed9384fbc15a": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_943732e63bd74a7c8c55052332fb1b68", "_dom_classes": [], "description": "", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 625, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 625, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_fc038a9394e84ddaa057f9e3571dd36e"}}, "72c482b0cdba458ea10f5ff8e0857f14": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_3917a1a28f1c48cfadda45e1521245f2", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 625/625 [00:00&lt;00:00, 17.8kB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_1cf7400ebc914a50b7bd2ae425076c1e"}}, "0cdf8254c99e4f8b9f45dfdbd81f7cf5": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "7d7a06fecd1643e9a6ac85bc0d1f9b59": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "943732e63bd74a7c8c55052332fb1b68": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "fc038a9394e84ddaa057f9e3571dd36e": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "3917a1a28f1c48cfadda45e1521245f2": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "1cf7400ebc914a50b7bd2ae425076c1e": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "7bfdda26e38e488188c2e214fef7db3b": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_f824f4788141425ebdb70b0e045055a3", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_92fae959909f444595d2966c1fd240a1", "IPY_MODEL_e43b34f2429f4291b993e6964ed314da", "IPY_MODEL_a286d901f1f54bdb9f6aa1bc72e2723f"]}}, "f824f4788141425ebdb70b0e045055a3": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "92fae959909f444595d2966c1fd240a1": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_8ba365ed2f0646ddab2802e15bffaf99", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": "Downloading: 100%", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_14b4f202eb99482281eb897d82353c6d"}}, "e43b34f2429f4291b993e6964ed314da": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_e97078f64771481d9353332551209eb7", "_dom_classes": [], "description": "", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 29, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 29, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_9dda555c410b4013bda38a491d898c29"}}, "a286d901f1f54bdb9f6aa1bc72e2723f": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_80bd2a6fbb9c4868b046ac8fdf1c1cce", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 29.0/29.0 [00:00&lt;00:00, 975B/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_ecc47d8a64e345159ba0fbea910dfa09"}}, "8ba365ed2f0646ddab2802e15bffaf99": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "14b4f202eb99482281eb897d82353c6d": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "e97078f64771481d9353332551209eb7": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "9dda555c410b4013bda38a491d898c29": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "80bd2a6fbb9c4868b046ac8fdf1c1cce": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "ecc47d8a64e345159ba0fbea910dfa09": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "9b597ebd031f45b5a2b8f5ec418682b5": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_443a6782a579489fa64a452fd120dbe5", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_eb9bdc35cba54ed79ce7cfbc8badb361", "IPY_MODEL_641caf1ba3da4d9fb03daa289a8d82a8", "IPY_MODEL_9914f2b3fd3042b9901c8c81db495ba7"]}}, "443a6782a579489fa64a452fd120dbe5": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "eb9bdc35cba54ed79ce7cfbc8badb361": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_ce6f86d79d294ed5b9897be66f4f75dc", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": "Downloading: 100%", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_9d6c90079a0c408c8615ab0f39a88315"}}, "641caf1ba3da4d9fb03daa289a8d82a8": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_7cabdf38b7f941f6b789a275c64dfb1b", "_dom_classes": [], "description": "", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 995526, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 995526, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_3b7eefb31f90463e880dacb1d53cd308"}}, "9914f2b3fd3042b9901c8c81db495ba7": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_fc69f3ed5a70481dacfc2a2e76a06a23", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 996k/996k [00:00&lt;00:00, 3.86MB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_014c5eb5423e4e63a7c9b8debc8f1ffd"}}, "ce6f86d79d294ed5b9897be66f4f75dc": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "9d6c90079a0c408c8615ab0f39a88315": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "7cabdf38b7f941f6b789a275c64dfb1b": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "3b7eefb31f90463e880dacb1d53cd308": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "fc69f3ed5a70481dacfc2a2e76a06a23": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "014c5eb5423e4e63a7c9b8debc8f1ffd": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "0a83a449e7264bf19550d84a70024c3b": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_c5a17ddb8f56481f822dc1079dc159e1", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_a142299c610e48a2b157d2350d97d64b", "IPY_MODEL_2053ca505a35422ba788ac0dbea25445", "IPY_MODEL_43bfd9b66e634c14a5f9328782f352e4"]}}, "c5a17ddb8f56481f822dc1079dc159e1": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "a142299c610e48a2b157d2350d97d64b": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_9cc8dc98dd3a486cbe7035cac57e717d", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": "Downloading: 100%", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_3bbe149dcfae44469e4029a5babe12cd"}}, "2053ca505a35422ba788ac0dbea25445": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_b75b01b7118d4120aefb58f4bcd477c0", "_dom_classes": [], "description": "", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 1961828, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 1961828, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_9551483f7689494eb35df4b5fac0d2e9"}}, "43bfd9b66e634c14a5f9328782f352e4": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_b05b1a907a9d48eeb21a390f605a8c75", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 1.96M/1.96M [00:00&lt;00:00, 4.49MB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_99d1efd7d121469baf2a5b0bff228961"}}, "9cc8dc98dd3a486cbe7035cac57e717d": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "3bbe149dcfae44469e4029a5babe12cd": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "b75b01b7118d4120aefb58f4bcd477c0": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "9551483f7689494eb35df4b5fac0d2e9": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "b05b1a907a9d48eeb21a390f605a8c75": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "99d1efd7d121469baf2a5b0bff228961": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "bf79caed0fbf47b5bc6075729c7b6e02": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_c6b1768fab5f45468a33e77adda4dc7e", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_6c41fa6b17934c538dcc0b3fb4252c0c", "IPY_MODEL_e9193302532c42e2813d9f7644fc814c", "IPY_MODEL_e2d22c0df3e04a34a668a4e3d2544e2c"]}}, "c6b1768fab5f45468a33e77adda4dc7e": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "6c41fa6b17934c538dcc0b3fb4252c0c": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_f44e46782c4f4846b6b83b907764a267", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": "Downloading: 100%", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_24aa06a9676543c693dc0f6c125b9759"}}, "e9193302532c42e2813d9f7644fc814c": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_32bcd30735a44c4c9e9c8a523cc7f59e", "_dom_classes": [], "description": "", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 714314041, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 714314041, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_d62772dedcb9466ba1a301fbd226725f"}}, "e2d22c0df3e04a34a668a4e3d2544e2c": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_2a3221e4ace04015abfc9ba54f39de51", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 714M/714M [00:14&lt;00:00, 47.5MB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_ac6199fbae0c4e1c90d282e5bdfce7bd"}}, "f44e46782c4f4846b6b83b907764a267": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "24aa06a9676543c693dc0f6c125b9759": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "32bcd30735a44c4c9e9c8a523cc7f59e": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "d62772dedcb9466ba1a301fbd226725f": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "2a3221e4ace04015abfc9ba54f39de51": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "ac6199fbae0c4e1c90d282e5bdfce7bd": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "e876f6815b8041fbad8ff5f3a61a4014": {"model_module": "@jupyter-widgets/controls", "model_name": "VBoxModel", "state": {"_view_name": "VBoxView", "_dom_classes": [], "_model_name": "VBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_7f7044060e0b4e80800884c0416be55c", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_1389ac0c37a14dd8afec5a29a6dc8485", "IPY_MODEL_e5e0dc915b964ebab3d4ca0961227530"]}}, "7f7044060e0b4e80800884c0416be55c": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "1389ac0c37a14dd8afec5a29a6dc8485": {"model_module": "@jupyter-widgets/controls", "model_name": "LabelModel", "state": {"_view_name": "LabelView", "style": "IPY_MODEL_9d86ff6ddb62445ab98da0fbb508e59f", "_dom_classes": [], "description": "", "_model_name": "LabelModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 0.11MB of 0.11MB uploaded (0.00MB deduped)\r", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_67f97bfba2704937906d476ab0c427b8"}}, "e5e0dc915b964ebab3d4ca0961227530": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_7b857c6cf316423491c059ec4c0e39b1", "_dom_classes": [], "description": "", "_model_name": "FloatProgressModel", "bar_style": "", "max": 1, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 1, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_a06fc3882b88477b846493ccb042dd34"}}, "9d86ff6ddb62445ab98da0fbb508e59f": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "67f97bfba2704937906d476ab0c427b8": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "7b857c6cf316423491c059ec4c0e39b1": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "a06fc3882b88477b846493ccb042dd34": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}}
+</script>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="Tahsin-Mayeesha/tahsin_mayeesha"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/tahsin_mayeesha/fastpages/jupyter/2021/08/04/_bangla-fake-news.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/tahsin_mayeesha/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/tahsin_mayeesha/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/tahsin_mayeesha/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/Tahsin-Mayeesha" title="Tahsin-Mayeesha"><svg class="svg-icon grey"><use xlink:href="/tahsin_mayeesha/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/tahsin_mayeesha" title="tahsin_mayeesha"><svg class="svg-icon grey"><use xlink:href="/tahsin_mayeesha/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
