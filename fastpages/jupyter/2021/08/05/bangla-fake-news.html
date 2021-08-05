@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Classifying Bangla Fake News with HuggingFace Transformers and Fastai | Tahsin Mayeesha</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Classifying Bangla Fake News with HuggingFace Transformers and Fastai" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="An easy to use blogging platform with support for Jupyter Notebooks." />
+<meta property="og:description" content="An easy to use blogging platform with support for Jupyter Notebooks." />
+<link rel="canonical" href="https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/05/bangla-fake-news.html" />
+<meta property="og:url" content="https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/05/bangla-fake-news.html" />
+<meta property="og:site_name" content="Tahsin Mayeesha" />
+<meta property="og:image" content="https://tahsin-mayeesha.github.io/tahsin_mayeesha/images/some_folder/your_image.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-05T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2021-08-05T00:00:00-05:00","url":"https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/05/bangla-fake-news.html","@type":"BlogPosting","image":"https://tahsin-mayeesha.github.io/tahsin_mayeesha/images/some_folder/your_image.png","headline":"Classifying Bangla Fake News with HuggingFace Transformers and Fastai","dateModified":"2021-08-05T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://tahsin-mayeesha.github.io/tahsin_mayeesha/fastpages/jupyter/2021/08/05/bangla-fake-news.html"},"description":"An easy to use blogging platform with support for Jupyter Notebooks.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/tahsin_mayeesha/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://tahsin-mayeesha.github.io/tahsin_mayeesha/feed.xml" title="Tahsin Mayeesha" /><link rel="shortcut icon" type="image/x-icon" href="/tahsin_mayeesha/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/tahsin_mayeesha/">Tahsin Mayeesha</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/tahsin_mayeesha/about/">About Me</a><a class="page-link" href="/tahsin_mayeesha/search/">Search</a><a class="page-link" href="/tahsin_mayeesha/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Classifying Bangla Fake News with HuggingFace Transformers and Fastai</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-05T00:00:00-05:00" itemprop="datePublished">
+        Aug 5, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      12 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/tahsin_mayeesha/categories/#fastpages">fastpages</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/tahsin_mayeesha/categories/#jupyter">jupyter</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/Tahsin-Mayeesha/tahsin_mayeesha/tree/master/_notebooks/2021-08-05-bangla-fake-news.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/tahsin_mayeesha/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/Tahsin-Mayeesha/tahsin_mayeesha/master?filepath=_notebooks%2F2021-08-05-bangla-fake-news.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/tahsin_mayeesha/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/Tahsin-Mayeesha/tahsin_mayeesha/blob/master/_notebooks/2021-08-05-bangla-fake-news.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/tahsin_mayeesha/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#Imports">Imports </a></li>
+<li class="toc-entry toc-h1"><a href="#Load-dataset">Load dataset </a></li>
+<li class="toc-entry toc-h1"><a href="#Model">Model </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#Multilingual-BERT">Multilingual BERT </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#run25oaqotg">Run(25oaqotg)</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#run-summary">Run summary:</a></li>
+<li class="toc-entry toc-h3"><a href="#run-history">Run history:</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Model-Sharing">Model Sharing </a></li>
+<li class="toc-entry toc-h1"><a href="#Explaining-predictions">Explaining predictions </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-08-05-bangla-fake-news.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this post we cover fine tuning a <a href="https://huggingface.co/bert-base-multilingual-cased">multilingual BERT</a> model from Huggingface Transformers library on <a href="https://aclanthology.org/2020.lrec-1.349/"><strong>BanFakeNews</strong></a> dataset released in LREC 2020. While English Fake News Classification and fact checking tasks have many resources and competitions available such as <a href="http://www.fakenewschallenge.org/">fake news challenge</a> and <a href="https://ai.facebook.com/blog/hateful-memes-challenge-and-data-set/">hateful meme detection</a>, similar efforts in Bangla has been almost non existent. BanFakeNews dataset contains 50k annotated articles from different news sources in Bangladesh, out of them around 1200 articles have been annotated as fake. As transformer architectures uses self attention to learn contextual embeddings they have been very popular in NLP research community for a while and many tools have been built around them.</p>
+<p>This post is reusing materials taught in Weights and Bias's study group of Fast ai with Huggingface(<a href="https://wandb.ai/wandb_fc/events/reports/W-B-Study-Group-Lectures-fast-ai-w-Hugging-Face--Vmlldzo4NDUzNDU?galleryTag=events">link</a>) where several recent(2021) libraries(<a href="https://github.com/ohmeow/blurr">Blurr</a>,<a href="https://github.com/morganmcg1/fasthugs">Fasthugs</a> &amp; <a href="https://novetta.github.io/adaptnlp/">Adaptnlp</a>) that integrates components from popular deep learning frameworks Huggingface transformers and Fastai v2 are shown.</p>
+<p>My experience with using Transformers is fairly low, recently I participated in Huggingface's Flax/Jax week and there our team pretrained <a href="https://huggingface.co/flax-community/gpt2-bengali">Bengali GPT2</a> and <a href="https://huggingface.co/flax-community/Bengali-t5/tree/main">T5</a>, so I was looking into Huggingface course and documentation to learn more about how to finetune transformers. Previously my thesis journal paper for undergraduate <a href="https://www.tandfonline.com/doi/full/10.1080/24751839.2020.1833136">"Deep Learning based Question Answering System in Bengali"</a> worked on Bangla Question Answering with transformers, but I had stuck more to given scripts back then and focused more on synthetic dataset construction via translation and handling data corruption issues. So this post will focus more on the high level API of <code>Blurr</code> and the components of huggingface and fastai that are relevant for getting started quickly.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip install -Uqq transformers datasets tqdm
+<span class="o">!</span>pip install -Uqq ohmeow-blurr
+<span class="o">!</span>pip install -Uqq wandb
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Imports">
+<a class="anchor" href="#Imports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Imports<a class="anchor-link" href="#Imports"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">wandb</span>
+
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">fastai.text.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">fastai.callback.wandb</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="kn">from</span> <span class="nn">blurr.data.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">blurr.modeling.all</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will use weights and biases for tracking experiments and runs. Project page : <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr">https://wandb.ai/tasmiah-tahsin/fake-news-blurr</a></p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wandb</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-blue-intense-fg ansi-bold">wandb</span>: Currently logged in as: <span class="ansi-yellow-fg">tasmiah-tahsin</span> (use `wandb login --relogin` to force relogin)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Load-dataset">
+<a class="anchor" href="#Load-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load dataset<a class="anchor-link" href="#Load-dataset"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This dataset has been downloaded from <a href="https://www.kaggle.com/cryptexcode/banfakenews">Kaggle</a>. Note that there are four files in the given dataset, but we use the two files (Authentic-48k and fake-1k) here because the rest of the files contain labelled fake and authentic news. Labelling in the sense of what type of fake news it is, clickbait, satire, misleading or false context, for the current priliminary phase we stick to binary classification of knowing if a news is fake or authentic. We also concatanate headline and content of the news article during preprocessing and combine the fake and authentic news dataset before sending them to Blurr dataloaders.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/tahsin_mayeesha/images/copied_from_nb/../images/fakenews/dataset_preview.png" alt=""></p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fake</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"/content/drive/MyDrive/fake news/Fake-1K.csv"</span><span class="p">)</span>
+<span class="n">authentic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"/content/drive/MyDrive/fake news/Authentic-48K.csv"</span><span class="p">,</span><span class="n">engine</span><span class="o">=</span><span class="s1">'python'</span><span class="p">,</span><span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">warn_bad_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">authentic</span><span class="p">[[</span><span class="s1">'headline'</span><span class="p">,</span><span class="s1">'content'</span><span class="p">,</span><span class="s1">'label'</span><span class="p">]],</span><span class="n">fake</span><span class="p">[[</span><span class="s1">'headline'</span><span class="p">,</span><span class="s1">'content'</span><span class="p">,</span><span class="s1">'label'</span><span class="p">]]])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">authentic</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">fake</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(48678, 7) (1299, 7)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'headline'</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">'headline'</span><span class="p">,</span><span class="s1">'content'</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>হট্টগোল করায় বাকৃবিতে দুইজন বরখাস্ত, ৬ জনকে শোকজগত ১৭ সেপ্টেম্বর বাংলাদেশ কৃষি বিশ্ববিদ্যালয়ে (বাকৃবি) উপাচার্যের কার্যালয়ে হট্টগোলের ঘটনায় দুইজনকে সাময়িক বরখাস্ত ও ছয় জনকে শোকজ করেছে বিশ্ববিদ্যালয় প্রশাসন। বুধবার বিশ্ববিদ্যালয় বাকৃবি রেজিস্ট্রার সাইফুল ইসলাম স্বাক্ষরিত এক নোটিশে আগামী ৭ দিনের মধ্যে উপযুক্ত উত্তর দেয়ার নির্দেশ দেয়া হয়েছে। এদিকে এ ঘটনায় আন্দোলনের সঙ্গে একাত্বতা প্রকাশ না করায় হামলার শিকার হয়ে কারিগরি কর্মচারী পরিষদের সভাপতি ও সাধারণ সম্পাদক হাসপাতালে ভর্তি হয়েছেন। সাময়িক বরখাস্তরা হলেন- শিক্ষা বিষয়ক শাখার কর্মচারী ও ৩য় শ্রেণির সাধারণ সম্পাদক মো. মোশারফ হোসেন ও কর্মকর্তা পরি...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">label</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span><span class="s2">"Authentic"</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="s2">"Fake"</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">train</span><span class="p">,</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will use <code>Blurr</code> high level API for sequence classification with the pandas dataframe where <code>BlearnerForSequenceClassification.from_dataframe()</code> method takes in a dataframe, splits them from the column of default <code>is_valid</code> using Fastai's <a href="https://docs.fast.ai/data.transforms.html#ColSplitter"><code>ColSplitter</code></a> into train and test splits, constructs the datablock and dataloaders and uses them for training. So we add a <code>'is_valid'</code> column in the dataframe. There are other ways of splitting the data available in Fastai like <code>RandomSubsetSplitter</code> where we can randomize the data inside a dataframe. Since we used scikit-learns train test split to shuffle the dataframe for now we can go with Column based splitting.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">'is_valid'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">valid</span><span class="p">[</span><span class="s1">'is_valid'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">final_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train</span><span class="p">,</span><span class="n">valid</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">final_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>text</th>
+      <th>is_valid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>16428</th>
+      <td>Authentic</td>
+      <td>সোচ্চার না হলে স্বাধীন ও মুক্ত সাংবাদিকতা অবরুদ্ধ হয়ে পড়বেজাতীয় প্রেস কাব ও বাংলাদেশ ফেডারেল সাংবাদিক ইউনিয়নের সাবেক সভাপতি এবং নিউজ টুডে সম্পাদক রিয়াজ উদ্দিন আহমেদ বলেছেন, ডিজিটাল নিরাপত্তা আইনে পুলিশকে যেভাবে ঢালাও ক্ষমতা দেয়া হয়েছে তাতে স্বাধীন সাংবাদিকতা অবরুদ্ধ হয়ে পড়বে। মুক্ত ও অবাধ তথ্যপ্রবাহ বলে কিছুই অবশিষ্ট থাকবে না। সাংবাদিকরা সেল্ফ সেন্সরশিপ আরোপ করতে বাধ্য হবেন। মত প্রকাশের ক্ষেত্রে এমন কালো আইনের বিরুদ্ধে সবাইকে সোচ্চার হতে হবে এখনই। নয়া দিগন্তকে দেয়া এক একান্ত সাক্ষাৎকারে রিয়াজ উদ্দিন আহমেদ আরো বলেন, ব্রিটিশ ঔপনিবেশিক আমলেও এমন আইন হয়নি। সমাজের প্রকৃত সত্য ধামাচাপা দিতে এবং ...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>31438</th>
+      <td>Authentic</td>
+      <td>সাউথইস্ট বিশ্ববিদ্যালয়ের বিজ্ঞান ও প্রকৌশল অনুষদে নবীনবরণ অনুষ্ঠিতসাউথইস্ট বিশ্ববিদ্যালয়ের বিজ্ঞান ও প্রকৌশল অনুষদের ফল সেমিস্টারে ভর্তি হওয়া নবাগত শিক্ষার্থীদের নবীনবরণ অনুষ্ঠিত হয়। সোমবার বিশ্ববিদ্যালয়ের তেজগাঁওয়ের স্থায়ী ক্যাম্পাসের সেমিনার হলে এ অনুষ্ঠান হয়। বিশ্ববিদ্যালয়ের উপাচার্য অধ্যাপক ড. এএনএম মেশকাত উদ্দীনের সভাপতিত্বে অনুষ্ঠানে প্রধান অতিথির বক্তব্য রাখেন ভিয়েলা টেক্স গ্রুপের চেয়ারম্যান জনাব কে এম রেজাউল হাসানাত এবং বিশেষ অতিথি ছিলেন ঢাকা ইমপেরিয়াল কলেজের অধ্যক্ষ জনাব আরিফ আহমেদ। স্বাগত বক্তব্য রাখেন সাউথইস্ট বিশ্ববিদ্যালয়ের রেজিস্ট্রার মেজর জেনারেল (অব.) কাজী ফকরুদ্দীন আহমেদ। ...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>10367</th>
+      <td>Authentic</td>
+      <td>মাগুরায় সড়ক দুর্ঘটনায় শালা-দুলাভাই নিহতমাগুরায় সড়ক দুর্ঘটনায় দুই মোটরসাইকেল আরোহী নিহত হয়েছেন। সোমবার সকালে পৌর এলাকার পারনান্দুয়ালী এলাকায় এ ঘটনা ঘটে।    নিহতরা হলেন- মাগুরা শহরের কাউন্সিল পাড়ার মৃত শাহাজাদার ছেলে মনিরউদ্দিন তালুকদার লাভলু (৩৮) ও তার শ্যালক সৌদী প্রবাসী নিয়ামুল (২৫)। নিয়ামুল ফরিদপুরের ভাঙ্গা উপজেলার আব্দুল ওয়াদুদের ছেলে। মনিরউদ্দিন লাভলু মাগুরা শহরে সাকুরা কালার ল্যাবে চাকরি করতেন।    মাগুরা সদর থানার এসআই মুবিন জানান, মনিরউদ্দিন লাভলু ও নিয়ামুল মাগুরা থেকে মোটরসাইকেলে শ্রীপুর উপজেলার রাধানগর বাজারে দুধ কিনতে যাচ্ছিলেন। মাগুরা পৌর এলাকার পারনান্দুয়ালী নামকস্থানে একটি কাভা...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>24556</th>
+      <td>Authentic</td>
+      <td>৭ বিশ্ববিদ্যালয়ের শিক্ষার্থী নিয়ে ‘ইন্সপিরেশন ফর হিউম্যান ওয়েলফেয়ার’সামাজিক সচেতনতামূলক সংগঠন ইন্সপিরেশন ফর হিউম্যান ওয়েলফেয়ার (আইএইচডাব্লিউ) নামক সংগঠনের কার্যনির্বাহী কমিটি গঠন করা হয়েছে। আজ ৩০ সেপ্টেম্বর গোপালগঞ্জে অনুষ্ঠিত একসভায় দেশের ৭টি পাবলিক বিশ্ববিদ্যালয়ের শিক্ষার্থীদের নিয়ে এ সংগঠনের আত্মপ্রকাশ ঘটে। বিশ্ববিদ্যালয়গুলো হলো ঢাকা বিশ্ববিদ্যালয়, জগন্নাথ বিশ্ববিদ্যালয়, বঙ্গবন্ধু বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়, যশোর বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়, পাবনা বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়, বরিশাল বিশ্ববিদ্যালয় ও খুলনা বিশ্ববিদ্যালয়। সভায় সর্বসম্মতিক্রমে বঙ্গবন্ধু শেখ মুজিবুর রহমান ...</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>24776</th>
+      <td>Authentic</td>
+      <td>মন্ত্রীর বাড়ির সৌন্দর্য রক্ষায় দোকান ভাংচুর, লুটপাট : ব্যবসায়ীদের মানববন্ধন ও বিক্ষোভবেসামরিক বিমান পরিবহন ও পর্যটন মন্ত্রী একেএম শাহজাহান কামালের বাড়ির সৌন্দর্য রক্ষায় লক্ষ্মীপুরে দোকান-পাট ভাংচুর ও লুটপাটের অভিযোগ করছে ব্যবসায়ীরা। এ ঘটনার প্রতিবাদে ব্যবসায়ীরা মানববন্ধন ও বিক্ষোভ সমাবেশ করছে। রবিবার দুপুরে শহরের চকবাজার এলাকায় ঘন্টাব্যাপী মানববন্ধন ও বিক্ষোভ সমাবেশ করে ব্যবসায়ীরা। এ সময় বক্তব্য রাখেন, লাবনী ফ্যাশনের মালিক আলাউদ্দিন, আল-আমিন ফার্মেসীর মালিক পরাজিত বাবু প্রমুখ। ব্যবসায়ীরা অভিযোগ করে বলেন, জেলা পরিষদ থেকে ইজারা নিয়ে শত বছর ধরে এখানে ব্যবসা করে আসছেন তারা। পাশে বেসামরিক বিমান...</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Model">
+<a class="anchor" href="#Model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model<a class="anchor-link" href="#Model"> </a>
+</h1>
+<h2 id="Multilingual-BERT">
+<a class="anchor" href="#Multilingual-BERT" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multilingual BERT<a class="anchor-link" href="#Multilingual-BERT"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since the original paper also used <a href="https://github.com/google-research/bert/blob/master/multilingual.md">multilingual cased bert</a> released by Google this post can be considered as an attempt to reproduce the work of BanFakeNews. They trained mbert for 50 epochs with a learning rate of 0.00002 and optimizer Adam. The batch size was 32. The overall F1 score after training for 50 epochs on this dataset was .99 and f1 for fake class was 0.68. Multilingual bert has been pretrained on 104 languages including bengali with wordpiece tokenization. As bengali is already included it makes it a valid choice for current bangla text classification task. Information for this model are : 104 languages, 12-layer, 768-hidden, 12-heads, 110M parameters.  As the size of the language corpora varied greatly for low resource languages exponential weighted smoothing was performed for weighting data during the pretraining stage, which results in undersampling high resource languages like english and oversampling low resource languages like Bengali. Mbert does not use any marker for input language to enable zero shot training.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wandb_init_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'reinit'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="s1">'project'</span><span class="p">:</span> <span class="s2">"fake-news-blurr"</span><span class="p">,</span> 
+    <span class="s1">'entity'</span><span class="p">:</span> <span class="s2">"tasmiah-tahsin"</span><span class="p">,</span>
+    <span class="s1">'notes'</span><span class="p">:</span> <span class="s1">'Finetuning banfakenews with multilingual bert via Blurr'</span><span class="p">,</span> 
+    <span class="s1">'tags'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'mbert'</span><span class="p">,</span> <span class="s1">'fake-news-classification'</span><span class="p">,</span> <span class="s1">'blurr'</span><span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wandb</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">wandb_init_kwargs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+                Tracking run with wandb version 0.11.2<br>
+                Syncing run <strong style="color:#cdcd00">flowing-snowball-15</strong> to <a href="https://wandb.ai" target="_blank">Weights &amp; Biases</a> <a href="https://docs.wandb.com/integrations/jupyter.html" target="_blank">(Documentation)</a>.<br>
+                Project page: <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr" target="_blank">https://wandb.ai/tasmiah-tahsin/fake-news-blurr</a><br>
+                Run page: <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/25oaqotg" target="_blank">https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/25oaqotg</a><br>
+                Run data is saved locally in <code>/content/wandb/run-20210805_084530-25oaqotg</code><br><br>
+            
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<h1>
+<a class="anchor" href="#run25oaqotg" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run(25oaqotg)</h1>
+<iframe src="https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/25oaqotg" style="border:none;width:100%;height:400px"></iframe>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since I'm fairly new in <code>blurr</code> I'm using the high level API, but the key ideas are following. <code>blurr</code> is integrating two frameworks. Here <code>Fastai</code> is providing the <code>datablock</code>, <code>learner</code>, <code>learning rate finder</code> functionalities with Leslie Smith's 1cycle policy components, while huggingface transformers is providing the ready to use transformer model configuration and architectures made publicly available from huggingface hub.</p>
+<p>Fastai's datablock helps to quickly transform a raw dataset to a mini-batch that can be sent to a model for training with its various transforms and splitting functions along with visualization capacities. Under the hood <code>blurr</code> is providing wrappers for the huggingface transformers and for finetuning its also grouping the parameters of the transformers model along with enabling discriminative fine tuning like  <a href="https://paperswithcode.com/method/ulmfit">ULMFiT</a>. Discriminative finetuning refers to using variable learning rates for different layers of a neural network and they can also change during training(increasing or decreasing learning rate will change how much the parameters are updated during each step).</p>
+<p>Datablock transforms can operate on both item and batch level. Fastai also provides the capacity add callbacks in the training loop. Callbacks are a generic programming concept which refers to calling a function inside another function(the base function calls the callback function, hence the naming) and are extensively used in DL training loops to perform specific tasks during the forward pass, loss calculation, backward pass and optimizer step taking for issues like changing learing rates and more.</p>
+<p>The low level API for <code>blurr</code>  works with datablocks and dataloaders  creating the mini batches which are combined with the model architecture, optimizer and loss function inside a <code>learner</code>. Mid level API contains <code>BLearner</code> and the highest level API contains task specific learners like the current one I'm using which is <code>BlearnerForSequenceClassification</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">blurr.modeling.core</span> <span class="kn">import</span> <span class="n">BlearnerForSequenceClassification</span>
+<span class="n">pretrained_model_name</span> <span class="o">=</span> <span class="s2">"bert-base-multilingual-cased"</span>
+<span class="n">learn</span> <span class="o">=</span> <span class="n">BlearnerForSequenceClassification</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">final_df</span><span class="p">,</span> <span class="n">pretrained_model_name</span><span class="p">,</span> <span class="n">dl_kwargs</span><span class="o">=</span><span class="p">{</span> <span class="s1">'bs'</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">(</span><span class="n">suggest_funcs</span><span class="o">=</span><span class="p">[</span><span class="n">minimum</span><span class="p">,</span> <span class="n">steep</span><span class="p">,</span> <span class="n">valley</span><span class="p">,</span> <span class="n">slide</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>SuggestedLRs(minimum=0.002290867641568184, steep=0.0010000000474974513, valley=0.0004786300996784121, slide=0.02290867641568184)</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr_max</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span><span class="n">cbs</span><span class="o">=</span><span class="p">[</span><span class="n">WandbCallback</span><span class="p">(</span><span class="n">log_preds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_model</span><span class="o">=</span><span class="kc">False</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Could not gather input dimensions
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+    <div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="0" class="" max="1" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/1 00:00&lt;00:00]
+    </div>
+    
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>f1_score</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<p>
+
+    </p>
+<div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="1583" class="" max="3749" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      42.22% [1583/3749 04:21&lt;05:57 0.1390]
+    </div>
+    
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">()</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">lr_max</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span><span class="n">cbs</span><span class="o">=</span><span class="p">[</span><span class="n">WandbCallback</span><span class="p">(</span><span class="n">log_preds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_model</span><span class="o">=</span><span class="kc">False</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">show_results</span><span class="p">(</span><span class="n">learner</span><span class="o">=</span><span class="n">learn</span><span class="p">,</span> <span class="n">max_n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">trunc_at</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>text</th>
+      <th>category</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>আফগানদের ছিটকে বাংলাদেশের রুদ্ধশ্বাস উত্তেজনার ম্যাচে ৩ রানে জিতেছে বাংলাদেশ । ২৪৯ রান আফগানিস্তান থেমেছে ২৪৬ রানে । সংক্ষিপ্ত স্কোর : বাংলাদেশ : ৫০ ওভারে ২৪৯ / ৭ ( লিটন ৪১, শান্ত ৬, মিঠুন ১, মুশফিক ৩</td>
+      <td>Authentic</td>
+      <td>Authentic</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>এলেবেলে : খাল কেটে কুমীর আনবেন না, সিদ্দিককে ভোট দেবেন না [ আহমেদের'এলেবেলে'বাংলা রম্য সাহিত্যে এক অনন্য সংযোজন । এর শিরোনামের রচনাগুলো তিনি তার ছোট ভাই আহসান হাবীবের প্রকাশিত মাসিক উন্মাদের জন্য লিখা</td>
+      <td>Fake</td>
+      <td>Fake</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>বিএনপি শুদু লাঞ্ছনা বঞ্ছনা গঞ্জনা : শমশের | দৈনিক মতিকণ্ঠনিজস্ব মতিবেদকরাজনীতী হতে অবসর ঘোষনা বৃহত্তর ইসলামীর বিএনপি শাখার খারিজি, বৃহত্তর ইসলামীর বিএনপি শাখার মহিলা আমীর ও শক্তির মালিক আপোষহীন দেশনেত</td>
+      <td>Fake</td>
+      <td>Fake</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>বোকো হারাম - গন্তব্য কতদূর? বোকো হারাম উগ্রপন্থী দল । পশ্চিম প্রথমে গঠিত জামাত আহলে সুন্নাহ লিদ জিহাদ, এটিই কিছুদিন পর বোকো হারাম নামে পরিচিতি । এদের মূল বক্তব্য হলো, পশ্চিমা শিক্ষা - সংস্কৃতি নিষিদ্ধ</td>
+      <td>Authentic</td>
+      <td>Authentic</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wandb</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<br>Waiting for W&amp;B process to finish, PID 722<br>Program ended successfully.
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+Find user logs for this run at: <code>/content/wandb/run-20210805_061325-159q9n5a/logs/debug.log</code>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+Find internal logs for this run at: <code>/content/wandb/run-20210805_061325-159q9n5a/logs/debug-internal.log</code>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<h3>
+<a class="anchor" href="#run-summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run summary:</h3>
+<br><style>
+    table.wandb td:nth-child(1) { padding: 0 10px; text-align: right }
+    </style>
+<table class="wandb">
+<tr>
+<td>epoch</td>
+<td>5</td>
+</tr>
+<tr>
+<td>train_loss</td>
+<td>0.08289</td>
+</tr>
+<tr>
+<td>raw_loss</td>
+<td>0.07101</td>
+</tr>
+<tr>
+<td>wd_0</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_0</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_0</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_0</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>wd_1</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_1</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_1</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_1</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_1</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>wd_2</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_2</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_2</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_2</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_2</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>wd_3</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>sqr_mom_3</td>
+<td>0.99</td>
+</tr>
+<tr>
+<td>lr_3</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>mom_3</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>eps_3</td>
+<td>1e-05</td>
+</tr>
+<tr>
+<td>_runtime</td>
+<td>3666</td>
+</tr>
+<tr>
+<td>_timestamp</td>
+<td>1628147675</td>
+</tr>
+<tr>
+<td>_step</td>
+<td>5509</td>
+</tr>
+<tr>
+<td>valid_loss</td>
+<td>0.14061</td>
+</tr>
+<tr>
+<td>f1_score</td>
+<td>0.77586</td>
+</tr>
+<tr>
+<td>accuracy</td>
+<td>0.95286</td>
+</tr>
+</table>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<h3>
+<a class="anchor" href="#run-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run history:</h3>
+<br><style>
+    table.wandb td:nth-child(1) { padding: 0 10px; text-align: right }
+    </style>
+<table class="wandb">
+<tr>
+<td>epoch</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇████</td>
+</tr>
+<tr>
+<td>train_loss</td>
+<td>▇██▇▆▅▅▅▅▅▃▅▄▄▂▄▄▃▃▃▂▂▃▃▁▂▂▂▂▂▂▁▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>raw_loss</td>
+<td>▇▃▃▇▃▃▆▂▃▅▁▆▆▁▁▇▁▁▆▄▅▁▃▄▁▆▂▄▂▃▂▁▄▁▁▁▁█▁▂</td>
+</tr>
+<tr>
+<td>wd_0</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_0</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_0</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_0</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_0</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>wd_1</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_1</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_1</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_1</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_1</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>wd_2</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_2</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_2</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_2</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_2</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>wd_3</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>sqr_mom_3</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>lr_3</td>
+<td>▁▂▂▃▄▅▆▇███████▇▇▇▇▆▆▆▅▅▅▄▄▄▃▃▃▂▂▂▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>mom_3</td>
+<td>██▇▆▅▄▃▂▁▁▁▁▁▁▁▂▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▇▇▇██████</td>
+</tr>
+<tr>
+<td>eps_3</td>
+<td>▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr>
+<td>_runtime</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇████</td>
+</tr>
+<tr>
+<td>_timestamp</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇████</td>
+</tr>
+<tr>
+<td>_step</td>
+<td>▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███</td>
+</tr>
+<tr>
+<td>valid_loss</td>
+<td>█▅▄▁▂</td>
+</tr>
+<tr>
+<td>f1_score</td>
+<td>▁▅███</td>
+</tr>
+<tr>
+<td>accuracy</td>
+<td>▁▄▇██</td>
+</tr>
+</table>
+<br>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+Synced 5 W&amp;B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+                    <br>Synced <strong style="color:#cdcd00">faithful-star-9</strong>: <a href="https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/159q9n5a" target="_blank">https://wandb.ai/tasmiah-tahsin/fake-news-blurr/runs/159q9n5a</a><br>
+                
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Model-Sharing">
+<a class="anchor" href="#Model-Sharing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model Sharing<a class="anchor-link" href="#Model-Sharing"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>sudo apt-get install git-lfs
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following NEW packages will be installed:
+  git-lfs
+0 upgraded, 1 newly installed, 0 to remove and 40 not upgraded.
+Need to get 2,129 kB of archives.
+After this operation, 7,662 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 git-lfs amd64 2.3.4-1 [2,129 kB]
+Fetched 2,129 kB in 1s (1,676 kB/s)
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 76, &lt;&gt; line 1.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
+Selecting previously unselected package git-lfs.
+(Reading database ... 160837 files and directories currently installed.)
+Preparing to unpack .../git-lfs_2.3.4-1_amd64.deb ...
+Unpacking git-lfs (2.3.4-1) ...
+Setting up git-lfs (2.3.4-1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>transformers-cli login
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2021-08-05 07:17:22.031785: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+
+        _|    _|  _|    _|    _|_|_|    _|_|_|  _|_|_|  _|      _|    _|_|_|      _|_|_|_|    _|_|      _|_|_|  _|_|_|_|
+        _|    _|  _|    _|  _|        _|          _|    _|_|    _|  _|            _|        _|    _|  _|        _|
+        _|_|_|_|  _|    _|  _|  _|_|  _|  _|_|    _|    _|  _|  _|  _|  _|_|      _|_|_|    _|_|_|_|  _|        _|_|_|
+        _|    _|  _|    _|  _|    _|  _|    _|    _|    _|    _|_|  _|    _|      _|        _|    _|  _|        _|
+        _|    _|    _|_|      _|_|_|    _|_|_|  _|_|_|  _|      _|    _|_|_|      _|        _|    _|    _|_|_|  _|_|_|_|
+
+        
+Username: Tahsin-Mayeesha
+Password: 
+Login successful
+Your token: oSBeuCeqFwuZgHGyqIBjgHEmiAchBfqCTsadczfjKMwdGdOskZjIvLzkFxbQafNAbNHwgsNibftTGdtUfMvWLkBjGwsMGfpdekOyyFbWFVOOJUkktSsdoacPJeeuZkhi 
+
+Your token has been saved to /root/.huggingface/token
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>git config --global user.email <span class="s2">"tasmiah.tahsin@northsouth.edu"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>git config --global user.name <span class="s2">"Tahsin-Mayeesha"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">blurr_tfm</span> <span class="o">=</span> <span class="n">get_blurr_tfm</span><span class="p">(</span><span class="n">learn</span><span class="o">.</span><span class="n">dls</span><span class="o">.</span><span class="n">before_batch</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">blurr_tfm</span><span class="o">.</span><span class="n">hf_model</span><span class="o">.</span><span class="n">push_to_hub</span><span class="p">(</span><span class="s2">"bangla-fake-news-mbert"</span><span class="p">,</span><span class="n">use_temp_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'https://huggingface.co/Tahsin-Mayeesha/bangla-fake-news-mbert/commit/2485b1ab7750b7746e6a052bf72f6c8871e8ecd4'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">blurr_tfm</span><span class="o">.</span><span class="n">hf_tokenizer</span><span class="o">.</span><span class="n">push_to_hub</span><span class="p">(</span><span class="s2">"bangla-fake-news-mbert"</span><span class="p">,</span><span class="n">use_temp_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">PanicException</span>                            Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-47-140839f91363&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>blurr_tfm<span class="ansi-blue-fg">.</span>hf_tokenizer<span class="ansi-blue-fg">.</span>push_to_hub<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">"bangla-fake-news-mbert"</span><span class="ansi-blue-fg">,</span>use_temp_dir<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">True</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/transformers/file_utils.py</span> in <span class="ansi-cyan-fg">push_to_hub</span><span class="ansi-blue-fg">(self, repo_path_or_name, repo_url, use_temp_dir, commit_message, organization, private, use_auth_token)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2110</span>         )
+<span class="ansi-green-intense-fg ansi-bold">   2111</span>         <span class="ansi-red-fg"># Save the files in the cloned repo</span>
+<span class="ansi-green-fg">-&gt; 2112</span><span class="ansi-red-fg">         </span>self<span class="ansi-blue-fg">.</span>save_pretrained<span class="ansi-blue-fg">(</span>repo_path_or_name<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2113</span>         <span class="ansi-red-fg"># Commit and push!</span>
+<span class="ansi-green-intense-fg ansi-bold">   2114</span>         url <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_push_to_hub<span class="ansi-blue-fg">(</span>repo<span class="ansi-blue-fg">,</span> commit_message<span class="ansi-blue-fg">=</span>commit_message<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/transformers/tokenization_utils_base.py</span> in <span class="ansi-cyan-fg">save_pretrained</span><span class="ansi-blue-fg">(self, save_directory, legacy_format, filename_prefix, push_to_hub, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2018</span>             file_names<span class="ansi-blue-fg">=</span>file_names<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   2019</span>             legacy_format<span class="ansi-blue-fg">=</span>legacy_format<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">-&gt; 2020</span><span class="ansi-red-fg">             </span>filename_prefix<span class="ansi-blue-fg">=</span>filename_prefix<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   2021</span>         )
+<span class="ansi-green-intense-fg ansi-bold">   2022</span> 
+
+<span class="ansi-green-fg">/usr/local/lib/python3.7/dist-packages/transformers/tokenization_utils_fast.py</span> in <span class="ansi-cyan-fg">_save_pretrained</span><span class="ansi-blue-fg">(self, save_directory, file_names, legacy_format, filename_prefix)</span>
+<span class="ansi-green-intense-fg ansi-bold">    572</span>                 save_directory<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">(</span>filename_prefix <span class="ansi-blue-fg">+</span> <span class="ansi-blue-fg">"-"</span> <span class="ansi-green-fg">if</span> filename_prefix <span class="ansi-green-fg">else</span> <span class="ansi-blue-fg">""</span><span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">+</span> TOKENIZER_FILE
+<span class="ansi-green-intense-fg ansi-bold">    573</span>             )
+<span class="ansi-green-fg">--&gt; 574</span><span class="ansi-red-fg">             </span>self<span class="ansi-blue-fg">.</span>backend_tokenizer<span class="ansi-blue-fg">.</span>save<span class="ansi-blue-fg">(</span>tokenizer_file<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    575</span>             file_names <span class="ansi-blue-fg">=</span> file_names <span class="ansi-blue-fg">+</span> <span class="ansi-blue-fg">(</span>tokenizer_file<span class="ansi-blue-fg">,</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    576</span> 
+
+<span class="ansi-red-fg">PanicException</span>: no entry found for key</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Explaining-predictions">
+<a class="anchor" href="#Explaining-predictions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Explaining predictions<a class="anchor-link" href="#Explaining-predictions"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample</span> <span class="n">news</span> <span class="o">=</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip install transformers-interpret
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+<span class="n">model_name</span> <span class="o">=</span> <span class="s2">"Tahsin-Mayeesha/bangla-fake-news-mbert"</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+
+<span class="c1"># With both the model and tokenizer initialized we are now able to get explanations on an example text.</span>
+
+<span class="kn">from</span> <span class="nn">transformers_interpret</span> <span class="kn">import</span> <span class="n">SequenceClassificationExplainer</span>
+<span class="n">cls_explainer</span> <span class="o">=</span> <span class="n">SequenceClassificationExplainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="p">)</span>
+<span class="n">word_attributions</span> <span class="o">=</span> <span class="n">cls_explainer</span><span class="p">(</span><span class="s2">"I love you, I like you"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cls_explainer</span><span class="o">.</span><span class="n">visualize</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+&lt;/div&gt;
+ 
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"1389ac0c37a14dd8afec5a29a6dc8485": {"model_module": "@jupyter-widgets/controls", "model_name": "LabelModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "LabelModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "LabelView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_67f97bfba2704937906d476ab0c427b8", "placeholder": "\u200b", "style": "IPY_MODEL_9d86ff6ddb62445ab98da0fbb508e59f", "value": " 0.11MB of 0.11MB uploaded (0.00MB deduped)\r"}}, "67f97bfba2704937906d476ab0c427b8": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "7b857c6cf316423491c059ec4c0e39b1": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "7f7044060e0b4e80800884c0416be55c": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9d86ff6ddb62445ab98da0fbb508e59f": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "a06fc3882b88477b846493ccb042dd34": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e5e0dc915b964ebab3d4ca0961227530": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_a06fc3882b88477b846493ccb042dd34", "max": 1, "min": 0, "orientation": "horizontal", "style": "IPY_MODEL_7b857c6cf316423491c059ec4c0e39b1", "value": 1}}, "e876f6815b8041fbad8ff5f3a61a4014": {"model_module": "@jupyter-widgets/controls", "model_name": "VBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "VBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "VBoxView", "box_style": "", "children": ["IPY_MODEL_1389ac0c37a14dd8afec5a29a6dc8485", "IPY_MODEL_e5e0dc915b964ebab3d4ca0961227530"], "layout": "IPY_MODEL_7f7044060e0b4e80800884c0416be55c"}}}
+</script>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="Tahsin-Mayeesha/tahsin_mayeesha"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/tahsin_mayeesha/fastpages/jupyter/2021/08/05/bangla-fake-news.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/tahsin_mayeesha/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/tahsin_mayeesha/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/tahsin_mayeesha/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/Tahsin-Mayeesha" title="Tahsin-Mayeesha"><svg class="svg-icon grey"><use xlink:href="/tahsin_mayeesha/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/tahsin_mayeesha" title="tahsin_mayeesha"><svg class="svg-icon grey"><use xlink:href="/tahsin_mayeesha/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
